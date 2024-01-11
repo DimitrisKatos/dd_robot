@@ -183,7 +183,8 @@ The first step is creating a robot model and give a specific color to a link. Yo
 
 ![Poll Mockup](./images/image5.png)
 
-#### Te next step is adding collision  to robot model. The robot model is the [dd_robot5.urdf](https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot5.urdf). There are no visual difference from the previous model. We just added the same geometry as in the visual properties. The collisions are crucial for Gazebo because is used to identify the boundaries of the object.
+#### 
+The next step is adding collision  to robot model. The robot model is the [dd_robot5.urdf](https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot5.urdf). There are no visual difference from the previous model. We just added the same geometry as in the visual properties. The collisions are crucial for Gazebo because is used to identify the boundaries of the object.
 The next robot model is [dd_robot6.urdf](https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot6.urdf). In this model we add physical properties to robot such as mass and inertia based on the shape. The dd_robot6.urdf has't visual difference from the previus model. 
 ```
 cd ~/ros2_ws
