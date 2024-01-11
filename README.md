@@ -1,22 +1,24 @@
 # Two wheel robot with Urdf and ROS 2
 
-In this tutorial, you will embark on the journey of creating your inaugural ROS 2 package, delving into the realm of robotics by constructing your very first two-wheel robot. The exploration extends beyond mere assembly as you delve into the intricacies of building a comprehensive robotics system, utilizing URDF from the ground up. Additionally, you will gain proficiency in crafting launch files through Python scripting. Culminating in a visual and interactive experience, you'll leverage Rviz and the venerable Gazebo Classic to observe and engage with your robotic creation.
+In this tutorial, we're going to build a visual model of a two-wheel robot. The tutorial will provide you with knowledge on how to construct a comprehensive robotic model from scratch. You will learn how to visualize your robot in Rviz and interact with its real behavior in the Gazebo Classic Simulator. In total, you will create seven robot models from scratch and develop two launch files that will integrate the robot into Rviz and spawn it into Gazebo.
 
 --- 
 
-Before creating your first ROS 2 package you must install ROS2, install the colcon and create a ros workspace. You can follow the instraction in the following links:
+Before creating your first ROS 2 package you must install ROS2, install the colcon tool and create a ros workspace. You can follow the instraction in the following links:
 - [Install ROS 2 humble.](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 - [Install colcon to build packages.](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
 - [Create a ROS 2 workspace.](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html)
 
-In the following link, you can discover a presentation on the installation process of ROS 2 and the utilization of the colcon tool. The presentation also guides you through the establishment of a ROS 2 workspace. Furthermore you can cope with some ROS 2 feautures. 
+
+In the provided link, you'll discover a presentation guiding you through the installation of ROS2 and the colcon tool. The tutorial also covers the creation of a ROS 2 workspace, crucial for organizing and developing your robotics projects. Furthermore ROS 2 features are represented. 
 
 - [Install ROS 2, Create ROS worksace.](https://docs.google.com/presentation/d/1xh91gPjNtocPdO5_trJKLcAcBAth0zTl/edit?usp=drive_web&ouid=106628092038381749227&rtpof=true) Greek Language.
 - Install ROS2, Create ROS workspace. English Language. (comming soon)
 
+Also make sure you have the joint_state_publihser package installed. 
 
 ## Create your first ROS 2 package.
-We wiil create a package based on Python. The name of package is dd_robot:
+We will create a package based on Python. The name of package is dd_robot:
 ```
 cd ~/ros2_ws/src
 ros2 pkg create --build-type ament_python dd_robot
@@ -67,9 +69,9 @@ Create a file named dd_robot.urdf in the folder urdf.
     </link>
 </robot>
 ``` 
-This code define a robot model name dd_robot. The robot has a link named base_link which is an box and its size is 0.5 width, 0.5 depth and 0.25 height.
+This code define a robot model name dd_robot. The robot has a link named base_link which is a box and its size is 0.5 width, 0.5 depth and 0.25 height.
 
-create a python file with the name dd_robot_rviz.launch.py. and saved it to the launch folder.
+Create a python file with the name dd_robot_rviz.launch.py. and saved it to the launch folder.
 
 `pip install math`
 
@@ -140,7 +142,9 @@ The next step is building the package, source the environment and launch the dd_
 cd ~/ros2_ws
 colcon build --packages-select dd_robot
 source install/setup.py
-ros2 launch dd_robot dd_robot_rviz.launch.py
+# If you are using the Windows Subsystem for Linux (WSL) run the next command
+export LIBGL_ALWAYS_SOFTWARE=1 LIBGL_ALWAYS_INDIRECT=0
+ros2 launch dd_robot dd_robot_rviz.launch.py gui:='false'
 ```
 The launch file will begin the Rviz2 gui. To see your robot make the following step:
 
@@ -152,18 +156,143 @@ The launch file will begin the Rviz2 gui. To see your robot make the following s
 
 ![Poll Mockup](./images/image2.png)
 
-## Improve robot model 
+## Adding wheels to robot model 
+Now let's have a look at how to add multiple shapes/link and joints to your robot. First of all we will add two cylinders and add continuous joint. Create a second robot model name [dd_robot2.urdf](https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot2.urdf) in the urdf file of the package. 
 
+Now you must visualize your robot to Rviz to ensure that the robot wheels are in correct position. Run the following commands:
+```
+cd ~/ros2_ws
+colcon build --packages-select dd_robot
+source install/setup.py
+# If you are using the Windows Subsystem for Linux (WSL) run the next command
+export LIBGL_ALWAYS_SOFTWARE=1 LIBGL_ALWAYS_INDIRECT=0
+ros2 launch dd_robot dd_robot_rviz.launch.py mode:= urdf/dd_robot2.urdf gui:='false'
+```
+The launch file will start the Rviz and you must follow the above instraction to visualize the robot to 3-D environment. 
 
-
-
-
-
+![Poll Mockup](./images/image3.png)
 
 ---
+## Add a caster
+After adding the wheeles of the robot, the next step is adding a caster for robots stability. The link and the joint are represented in the [dd_robot3.urdf](https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot3.urdf). Create a robot model named dd_robot3.urdf in the urdf folder. To visualize the robot model, run the above commands.
 
-## why graph
-- help me
-- okeii
+![Poll Mockup](./images/image4.png)
 
+## Adding colors and collisions 
+The first step is creating a robot model and give a specific color to a link. You will use the material tag to define color in term of red/green/blue/alpha, each in the range of [0,1]. The robot model is the [dd_robot4.urdf](https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot4.urdf). 
+
+![Poll Mockup](./images/image5.png)
+
+#### Te next step is adding collision  to robot model. The robot model is the [dd_robot5.urdf](https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot5.urdf). There are no visual difference from the previous model. We just added the same geometry as in the visual properties. The collisions are crucial for Gazebo because is used to identify the boundaries of the object.
+The next robot model is [dd_robot6.urdf](https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot6.urdf). In this model we add physical properties to robot such as mass and inertia based on the shape. The dd_robot6.urdf has't visual difference from the previus model. 
+```
+cd ~/ros2_ws
+colcon build --packages-select dd_robot
+source install/setup.py
+# If you are using the Windows Subsystem for Linux (WSL) run the next command
+export LIBGL_ALWAYS_SOFTWARE=1 LIBGL_ALWAYS_INDIRECT=0
+ros2 launch dd_robot dd_robot_rviz.launch.py mode:= urdf/dd_robot6.urdf gui:='true'
+```
+Now you can see the graphical user interface of the joint state publhisher. With this gui you can ensure that your joints works in the desired way.
+
+![Poll Mockup](./images/image6.png)
 ---
+
+## dd_robot to Gazebo
+Ros2 and Gazebo Classic communicate with some extra tags that called Gazebo tags. In this tutorial we will use Gazebo tags by adding colors to links in simulation. The new [dd_robot7.urdf]((https://github.com/DimitrisKatos/dd_robot/blob/master/urdf/ddrobot6.urdf)) model has some extra tags. The tags are the following:
+```xml
+  <gazebo reference="base_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="right_wheel">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+    <gazebo reference="left_wheel">
+  <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="caster">
+    <material>Gazebo/Red</material>
+  </gazebo>
+```
+For spawning the robot model to Gazebo we need to create a world. In the worlds folder create the [ddrobot.world](https://github.com/DimitrisKatos/dd_robot/blob/master/worlds/ddrobot.world).
+```xml
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://construction_cone</uri>
+      <name>construction_cone</name>
+      <pose>-3.0 0 0 0 0 0</pose>
+    </include>
+  </world>
+</sdf>
+```
+
+The following step is creating a new launch file. This file is capable of spawning the dd_robot7.urdf model to a gazebo world.
+Create a new python script in the launch folder with and named it dd_robot_gazebo.launch.py.
+```py
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import ExecuteProcess
+
+
+from launch_ros.actions import Node
+import xacro
+
+def generate_launch_description():
+
+    # Specify the name of the package and path to xacro file within the package
+    pkg_name = 'dd_robot'
+    file_subpath = 'urdf/ddrobot7.urdf'
+    world_subpath= 'worlds/ddrobot.world'
+
+    # Use xacro to process the file
+    xacro_file = os.path.join(get_package_share_directory(pkg_name),file_subpath)
+    world_path = os.path.join(get_package_share_directory(pkg_name),world_subpath)
+    robot_description_raw = xacro.process_file(xacro_file).toxml()
+
+    # Configure the node
+    node_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{'robot_description': robot_description_raw,
+        'use_sim_time': True}] # add other parameters here if required
+    )
+
+    spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
+                    arguments=['-topic', 'robot_description',
+                                '-entity', 'ddrobot'],
+                    output='screen')
+
+    # Run the node
+    return LaunchDescription([
+        ExecuteProcess(cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', world_path], output='screen'),
+        node_robot_state_publisher,
+        spawn_entity
+    ])
+
+```
+The following steps is launching this file. You need to run the following commands.
+```
+cd ~/ros2_ws
+colcon build
+# For WSL you must run the next command.
+export LIBGL_ALWAYS_SOFTWARE=1 LIBGL_ALWAYS_INDIRECT=0
+cd ~/ros2_ws/scr/dd_robot
+ros2 launch dd_robot dd_robot_gazebo.launch.py
+```
+
+![Poll Mockup](./images/image8.png)
